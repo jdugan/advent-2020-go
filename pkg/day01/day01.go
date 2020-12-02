@@ -41,11 +41,9 @@ func findTwoFactors (sum int) pie.Ints {
 
   for factors.Product() == 0 {
     f0, list = list.Shift()
-    for _, f1 := range list {
-      if f0 + f1 == sum {
-        factors = append(factors, f0, f1)
-        break
-      }
+    f1 := sum - f0
+    if list.Contains(f1) {
+      factors = append(factors, f0, f1)
     }
   }
 
