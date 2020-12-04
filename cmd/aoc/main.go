@@ -1,9 +1,9 @@
 package main
 
 import (
-  "../../pkg/day03"
+  "../../pkg/day04"
 )
 
 func main () {
-  day03.Both()
+  day04.Both()
 }
