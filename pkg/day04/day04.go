@@ -4,8 +4,6 @@ import (
   "fmt"
   "strings"
 
-  "github.com/elliotchance/pie/pie"
-
   "../../pkg/reader"
 )
 
@@ -21,10 +19,9 @@ func Both() {
 }
 
 func Puzzle1() int {
-  rkeys := requiredKeys()
   count := 0
   for _, p := range passports() {
-    if p.ValidateKeys(rkeys) {
+    if p.ValidateKeys() {
       count = count + 1
     }
   }
@@ -32,10 +29,9 @@ func Puzzle1() int {
 }
 
 func Puzzle2() int {
-  rkeys := requiredKeys()
   count := 0
   for _, p := range passports() {
-    if p.ValidateFormats(rkeys) {
+    if p.ValidateFormats() {
       count = count + 1
     }
   }
@@ -76,9 +72,4 @@ func passports () []Passport {
   passports = append(passports, Passport{fields: parse(fields)})
 
   return passports
-}
-
-func requiredKeys () pie.Strings {
-  keys := []string{"byr", "ecl", "eyr", "hcl", "hgt", "iyr", "pid"}
-  return pie.Strings(keys).Sort()
 }

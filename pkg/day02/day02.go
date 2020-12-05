@@ -51,7 +51,7 @@ func data () pie.Strings {
 }
 
 func parse (line string) (policy Policy, password string) {
-  pattern, _ := regexp.Compile(`^(?P<min>\d+)-(\d+) ([a-z]): (\w+)$`)
+  pattern, _ := regexp.Compile(`^(\d+)-(\d+) ([a-z]): (\w+)$`)
   elements   := pattern.FindStringSubmatch(line)[1:]
 
   min, _   := strconv.Atoi(elements[0])
