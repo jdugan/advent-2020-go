@@ -15,18 +15,13 @@ type Coord struct {
 
 // ========== RECEIVERS ===================================
 
-func (c Coord) Base (period int) Coord {
-  return Coord{x: c.x % period, y: c.y}
-}
-
-func (c1 Coord) Equals (c2 Coord) bool {
-  return c1.x == c2.x && c1.y == c2.y
-}
-
 func (c Coord) Key () string {
   return fmt.Sprintf("%d,%d", c.x, c.y)
 }
 
-func (c Coord) Move (dx int, dy int) Coord {
-  return Coord{x: c.x + dx, y: c.y + dy}
+func (c Coord) Move (dx int, dy int, period int) Coord {
+  x := (c.x + dx) % period
+  y := c.y + dy
+
+  return Coord{x: x, y: y}
 }

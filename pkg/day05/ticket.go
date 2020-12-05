@@ -2,8 +2,8 @@ package day05
 
 import (
   "fmt"
+  "regexp"
   "strconv"
-  "strings"
 )
 
 
@@ -17,30 +17,16 @@ type Ticket struct {
 // ========== RECEIVERS ===================================
 
 func (t Ticket) Format () string {
-  return fmt.Sprintf("%s: r %d, s %d, id %d", t.code, t.Row(), t.Seat(), t.Id())
+  return fmt.Sprintf("%s: id %d", t.code, t.Id())
 }
 
 func (t Ticket) Id () int {
-  return (t.Row() * 8) + t.Seat()
-}
+  re0 := regexp.MustCompile(`[F|L]`)
+  re1 := regexp.MustCompile(`[B|R]`)
 
-func (t Ticket) Row () int {
   code := t.code
-  code  = strings.Replace(code, "L", "", -1)
-  code  = strings.Replace(code, "R", "", -1)
-  code  = strings.Replace(code, "F", "0", -1)
-  code  = strings.Replace(code, "B", "1", -1)
-
-  pos, _ := strconv.ParseInt(code, 2, 32)
-  return int(pos)
-}
-
-func (t Ticket) Seat () int {
-  code := t.code
-  code  = strings.Replace(code, "F", "", -1)
-  code  = strings.Replace(code, "B", "", -1)
-  code  = strings.Replace(code, "L", "0", -1)
-  code  = strings.Replace(code, "R", "1", -1)
+  code  = re0.ReplaceAllString(code, "0")
+  code  = re1.ReplaceAllString(code, "1")
 
   pos, _ := strconv.ParseInt(code, 2, 32)
   return int(pos)

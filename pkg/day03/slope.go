@@ -17,12 +17,11 @@ func (s Slope) Count (dx int, dy int) int {
   count := 0
 
   for coord.y < s.length {
-    base      := coord.Base(s.period)
-    _, isTree := s.trees[base.Key()]
+    _, isTree := s.trees[coord.Key()]
     if isTree {
       count = count + 1
     }
-    coord = coord.Move(dx, dy)
+    coord = coord.Move(dx, dy, s.period)
   }
 
   return count
