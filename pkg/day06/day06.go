@@ -20,16 +20,40 @@ func Both() {
 }
 
 func Puzzle1() int {
-  return -1
+  sum := 0
+  for _, g := range groups() {
+    da := g.DistinctAnswers()
+    sum = sum + len(da)
+  }
+  return sum
 }
 
 func Puzzle2() int {
-  return -2
+  sum := 0
+  for _, g := range groups() {
+    ua := g.UnanimousAnswers()
+    sum = sum + len(ua)
+  }
+  return sum
 }
 
 
 // ========== PRIVATE FNS =================================
 
-func data () pie.Strings {
-  return reader.Lines("./data/day06/input.txt")
+func groups () []Group {
+  lines   := reader.Lines("./data/day06/input.txt")
+  groups  := make([]Group, 0)
+  answers := make([]string, 0)
+
+  for _, line := range lines {
+    if line == "" {
+      groups  = append(groups, Group{answers: pie.Strings(answers)})
+      answers = make([]string, 0)
+    } else {
+      answers = append(answers, line)
+    }
+  }
+  groups  = append(groups, Group{answers: pie.Strings(answers)})
+
+  return groups
 }
