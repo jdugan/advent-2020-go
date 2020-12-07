@@ -18,19 +18,22 @@ type Group struct {
 
 func (g Group) DistinctAnswers () string {
   str   := g.answers.Join("")
-  chars := strings.Split(str, "")
+  chars := pie.Strings(strings.Split(str, "")).Sort()
 
-  return pie.Strings(chars).Sort().Unique().Join("")
+  return chars.Unique().Join("")
 }
 
 func (g Group) UnanimousAnswers () string {
-  str, list := g.answers.Shift()
+  head, tail := g.answers.Shift()
 
-  arr := pie.Strings(strings.Split(str, "")).Sort()
-  for _, item := range list {
-    chars := pie.Strings(strings.Split(item, "")).Sort()
-    arr    = arr.Intersect(chars)
+  chars := pie.Strings(strings.Split(head, "")).Sort()
+  for _, str := range tail {
+    tmp  := pie.Strings(strings.Split(str, "")).Sort()
+    chars = chars.Intersect(tmp)
+    if len(chars) == 0 {
+      break
+    }
   }
 
-  return arr.Sort().Join("")
+  return chars.Sort().Join("")
 }
