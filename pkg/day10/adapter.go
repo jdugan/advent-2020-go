@@ -17,8 +17,10 @@ type Adapter struct {
 func (a Adapter) CompatibleJoltages (adapters []Adapter) (matches pie.Ints) {
   for _, a1 := range adapters {
     step := a1.Difference(a)
-    if step > 0 && step <= 3 {
+    if step <= 3 {
       matches = append(matches, a1.joltage)
+    } else {
+      break
     }
   }
   return matches
