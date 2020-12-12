@@ -21,7 +21,7 @@ type SeatingArea struct {
 func (sa SeatingArea) IterateByAdjacency () SeatingArea {
   wsa := sa.Copy()
   for id, s := range sa.seats {
-    s1 := s.ReassignByAdjacentSeats(sa)
+    s1 := sa.ReassignByAdjacentSeats(s)
     wsa.seats[id] = s1
   }
   return wsa
@@ -30,7 +30,7 @@ func (sa SeatingArea) IterateByAdjacency () SeatingArea {
 func (sa SeatingArea) IterateByVisibility () SeatingArea {
   wsa := sa.Copy()
   for id, s := range sa.seats {
-    s1 := s.ReassignByVisibleSeats(sa)
+    s1 := sa.ReassignByVisibleSeats(s)
     wsa.seats[id] = s1
   }
   return wsa
@@ -41,18 +41,143 @@ func (sa SeatingArea) IterateByVisibility () SeatingArea {
 
 func (sa SeatingArea) SetAdjacentSeatIds () SeatingArea {
   for id, s := range sa.seats {
-    s.adjacentIds = s.AdjacentSeatIds(sa)
+    s.adjacentIds = sa.FindAdjacentSeatIds(s)
     sa.seats[id]  = s
   }
   return sa
 }
 
-func (sa SeatingArea) SetVisibleSlopes () SeatingArea {
+func (sa SeatingArea) SetVisibleIds () SeatingArea {
   for id, s := range sa.seats {
-    s.visibleSlopes = s.VisibleSlopes(sa)
-    sa.seats[id]    = s
+    s.visibleIds = sa.FindVisibleIds(s)
+    sa.seats[id] = s
   }
   return sa
+}
+
+
+// ---------- ADJACENT HELPERS ----------------------------
+
+func (sa SeatingArea) FindAdjacentSeatIds (s Seat) pie.Strings {
+  ids := make([]string, 0)
+  ids  = append(ids, fmt.Sprintf("%d,%d", s.x - 1, s.y - 1))    // northwest
+  ids  = append(ids, fmt.Sprintf("%d,%d", s.x, s.y - 1))        // north
+  ids  = append(ids, fmt.Sprintf("%d,%d", s.x + 1, s.y - 1))    // northeast
+  ids  = append(ids, fmt.Sprintf("%d,%d", s.x + 1, s.y))        // east
+  ids  = append(ids, fmt.Sprintf("%d,%d", s.x + 1, s.y + 1))    // southeast
+  ids  = append(ids, fmt.Sprintf("%d,%d", s.x, s.y + 1))        // south
+  ids  = append(ids, fmt.Sprintf("%d,%d", s.x - 1, s.y + 1))    // southwest
+  ids  = append(ids, fmt.Sprintf("%d,%d", s.x - 1, s.y))        // west
+
+  asids := pie.Strings{}
+  for _, id := range ids {
+    _, exists := sa.seats[id]
+    if exists {
+      asids = append(asids, id)
+    }
+  }
+
+  return asids
+}
+
+func (sa SeatingArea) ReassignByAdjacentSeats (s Seat) Seat {
+  s1   := s.Copy()
+  oasc := sa.OccupiedAdjacentSeatCount(s)
+  if s.occupied {
+    if oasc > 3 {
+      s1.occupied = false
+    }
+  } else {
+    if oasc == 0 {
+      s1.occupied = true
+    }
+  }
+  return s1
+}
+
+func (sa SeatingArea) OccupiedAdjacentSeatCount (s Seat) int {
+  count := 0
+  for _, id := range s.adjacentIds {
+    s, exists := sa.seats[id]
+    if exists && s.occupied {
+      count = count + 1
+      if count > 3 {
+        break
+      }
+    }
+  }
+  return count
+}
+
+
+// ---------- VISIBLE HELPERS -----------------------------
+
+func (sa SeatingArea) FindVisibleIds (s Seat) pie.Strings {
+  slopes := make([]pie.Ints, 0)
+  slopes  = append(slopes, pie.Ints{-1, -1})      // northwest
+  slopes  = append(slopes, pie.Ints{0, -1})       // north
+  slopes  = append(slopes, pie.Ints{1, -1})       // northeast
+  slopes  = append(slopes, pie.Ints{1, 0})        // east
+  slopes  = append(slopes, pie.Ints{1, 1})        // southeast
+  slopes  = append(slopes, pie.Ints{0, 1})        // south
+  slopes  = append(slopes, pie.Ints{-1, 1})       // southwest
+  slopes  = append(slopes, pie.Ints{-1, 0})       // west
+
+  vsids := pie.Strings{}
+  for _, slope := range slopes {
+    tmp  := Seat{}
+    halt := false
+    iter := 1
+
+    for !halt {
+      tmp.x = s.x + (iter * slope[0])
+      tmp.y = s.y + (iter * slope[1])
+
+      if sa.IsSeatIdWithinArea(tmp) {
+        id        := tmp.Id()
+        _, exists := sa.seats[id]
+        if exists {                         // visible seat; save and stop
+          vsids = append(vsids, id)
+          halt  = true
+        } else {                            // open floor; continue
+          iter = iter + 1
+        }
+      } else {                              // off the board; stop
+        halt = true
+      }
+    }
+  }
+
+  return vsids
+}
+
+func (sa SeatingArea) OccupiedVisibleSeatCount (s Seat) int {
+  count := 0
+  for _, id := range s.visibleIds {
+    s, exists := sa.seats[id]
+    if exists && s.occupied {
+      count = count + 1
+      if count > 4 {
+        break
+      }
+    }
+  }
+  return count
+}
+
+func (sa SeatingArea) ReassignByVisibleSeats (s Seat) Seat {
+  s1   := s.Copy()
+  oasc := sa.OccupiedVisibleSeatCount(s)
+  if s.occupied {
+    if oasc > 4 {
+      s1.occupied = false
+    }
+  } else {
+    if oasc == 0 {
+      s1.occupied = true
+    }
+  }
+  return s1
 }
 
 

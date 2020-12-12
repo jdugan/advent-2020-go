@@ -17,6 +17,7 @@ import (
   "./pkg/day10"
   "./pkg/day11"
   "./pkg/day12"
+  "./pkg/day13"
 )
 
 func Test(t *testing.T) {
@@ -70,6 +71,10 @@ func Test(t *testing.T) {
     g.It("Should get correct answers for Day 12", func() {
       g.Assert(day12.Puzzle1()).Equal(796)
       g.Assert(day12.Puzzle2()).Equal(39446)
+    })
+    g.It("Should get correct answers for Day 13", func() {
+      g.Assert(day13.Puzzle1()).Equal(-1)
+      g.Assert(day13.Puzzle2()).Equal(-2)
     })
   })
 }

@@ -33,7 +33,7 @@ func Puzzle1() int {
 }
 
 func Puzzle2() int {
-  area := baseSeatingArea().SetVisibleSlopes()
+  area := baseSeatingArea().SetVisibleIds()
   prev := -1
   curr := 0
 

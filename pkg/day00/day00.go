@@ -31,5 +31,7 @@ func Puzzle2() int {
 // ========== PRIVATE FNS =================================
 
 func data () pie.Strings {
-  return reader.Lines("./data/day00/input.txt")
+  lines := reader.Lines("./data/day00/input.txt")
+  
+  return lines
 }

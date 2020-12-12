@@ -1,4 +1,4 @@
-package day12
+package day13
 
 import (
   "fmt"
@@ -13,7 +13,7 @@ import (
 
 func Both() {
   fmt.Println(" ")
-  fmt.Println("DAY", 12)
+  fmt.Println("DAY", 13)
   fmt.Println("  Puzzle 1", "=>", Puzzle1())
   fmt.Println("  Puzzle 2", "=>", Puzzle2())
   fmt.Println(" ")
@@ -31,5 +31,7 @@ func Puzzle2() int {
 // ========== PRIVATE FNS =================================
 
 func data () pie.Strings {
-  return reader.Lines("./data/day12/input.txt")
+  lines := reader.Lines("./data/day13/input.txt")
+
+  return lines
 }
