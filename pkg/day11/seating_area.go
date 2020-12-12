@@ -36,6 +36,26 @@ func (sa SeatingArea) IterateByVisibility () SeatingArea {
   return wsa
 }
 
+
+// ---------- PRE-PROCESSORS ------------------------------
+
+func (sa SeatingArea) SetAdjacentSeatIds () SeatingArea {
+  for id, s := range sa.seats {
+    s.adjacentIds = s.AdjacentSeatIds(sa)
+    sa.seats[id]  = s
+  }
+  return sa
+}
+
+func (sa SeatingArea) SetVisibleSlopes () SeatingArea {
+  for id, s := range sa.seats {
+    s.visibleSlopes = s.VisibleSlopes(sa)
+    sa.seats[id]    = s
+  }
+  return sa
+}
+
+
 // ---------- STATE HELPERS -------------------------------
 
 func (sa SeatingArea) IsSeatIdWithinArea (s Seat) bool {
@@ -44,17 +64,13 @@ func (sa SeatingArea) IsSeatIdWithinArea (s Seat) bool {
 }
 
 func (sa SeatingArea) OccupiedSeatCount () int {
-  return len(sa.OccupiedSeats())
-}
-
-func (sa SeatingArea) OccupiedSeats () []Seat {
-  matches := make([]Seat, 0)
+  count := 0
   for _, v := range sa.seats {
     if v.occupied {
-      matches = append(matches, v)
+      count = count + 1
     }
   }
-  return matches
+  return count
 }
 
 

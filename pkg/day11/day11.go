@@ -19,9 +19,9 @@ func Both() {
 }
 
 func Puzzle1() int {
-  area  := baseSeatingArea()
-  prev  := -1
-  curr  := 0
+  area := baseSeatingArea().SetAdjacentSeatIds()
+  prev := -1
+  curr := 0
 
   for prev != curr {
     prev = curr
@@ -33,9 +33,9 @@ func Puzzle1() int {
 }
 
 func Puzzle2() int {
-  area  := baseSeatingArea()
-  prev  := -1
-  curr  := 0
+  area := baseSeatingArea().SetVisibleSlopes()
+  prev := -1
+  curr := 0
 
   for prev != curr {
     prev = curr

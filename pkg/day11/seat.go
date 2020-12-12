@@ -10,9 +10,12 @@ import (
 // ========== DEFINITION ==================================
 
 type Seat struct {
-  x         int
-  y         int
-  occupied  bool
+  x             int
+  y             int
+  occupied      bool
+
+  adjacentIds   pie.Strings
+  visibleSlopes []pie.Ints
 }
 
 
@@ -51,7 +54,7 @@ func (s Seat) ReassignByVisibleSeats (sa SeatingArea) Seat {
 
 // ---------- ADJACENT HELPERS ----------------------------
 
-func (s Seat) AdjacentSeatIds () []string {
+func (s Seat) AdjacentSeatIds (sa SeatingArea) pie.Strings {
   ids := make([]string, 0)
   ids  = append(ids, fmt.Sprintf("%d,%d", s.x - 1, s.y - 1))    // northwest
   ids  = append(ids, fmt.Sprintf("%d,%d", s.x, s.y - 1))        // north
@@ -61,39 +64,33 @@ func (s Seat) AdjacentSeatIds () []string {
   ids  = append(ids, fmt.Sprintf("%d,%d", s.x, s.y + 1))        // south
   ids  = append(ids, fmt.Sprintf("%d,%d", s.x - 1, s.y + 1))    // southwest
   ids  = append(ids, fmt.Sprintf("%d,%d", s.x - 1, s.y))        // west
-  return ids
-}
 
-func (s Seat) AdjacentSeats (sa SeatingArea) []Seat {
-  as := make([]Seat,0)
-  for _, id := range s.AdjacentSeatIds() {
-    s, exists := sa.seats[id]
+  asids := pie.Strings{}
+  for _, id := range ids {
+    _, exists := sa.seats[id]
     if exists {
-      as = append(as, s)
+      asids = append(asids, id)
     }
   }
-  return as
-}
 
-func (s Seat) OccupiedAdjacentSeats (sa SeatingArea) []Seat {
-  as := s.AdjacentSeats(sa)
-  os := make([]Seat, 0)
-  for _, s := range as {
-    if s.occupied {
-      os = append(os, s)
-    }
-  }
-  return os
+  return asids
 }
 
 func (s Seat) OccupiedAdjacentSeatCount (sa SeatingArea) int {
-  return len(s.OccupiedAdjacentSeats(sa))
+  count := 0
+  for _, id := range s.adjacentIds {
+    s, exists := sa.seats[id]
+    if exists && s.occupied {
+      count = count + 1
+    }
+  }
+  return count
 }
 
 
 // ---------- VISIBLE HELPERS -----------------------------
 
-func (s Seat) VisibleSlopes() []pie.Ints {
+func (s Seat) VisibleSlopes (sa SeatingArea) []pie.Ints {
   slopes := make([]pie.Ints, 0)
   slopes  = append(slopes, pie.Ints{-1, -1})      // northwest
   slopes  = append(slopes, pie.Ints{0, -1})       // north
@@ -103,13 +100,40 @@ func (s Seat) VisibleSlopes() []pie.Ints {
   slopes  = append(slopes, pie.Ints{0, 1})        // south
   slopes  = append(slopes, pie.Ints{-1, 1})       // southwest
   slopes  = append(slopes, pie.Ints{-1, 0})       // west
-  return slopes
+
+  vslopes := make([]pie.Ints, 0)
+
+  for _, slope := range slopes {
+    tmp  := Seat{}
+    halt := false
+    iter := 1
+
+    for !halt {
+      tmp.x = s.x + (iter * slope[0])
+      tmp.y = s.y + (iter * slope[1])
+
+      if sa.IsSeatIdWithinArea(tmp) {
+        id        := tmp.Id()
+        _, exists := sa.seats[id]
+        if exists {                         // visible seat; save and stop
+          vslopes = append(vslopes, slope)
+          halt    = true
+        } else {                            // open floor; continue
+          iter = iter + 1
+        }
+      } else {                              // off the board; stop
+        halt = true
+      }
+    }
+  }
+
+  return vslopes
 }
 
-func (s Seat) VisibleSeats (sa SeatingArea) []Seat {
-  vs := make([]Seat, 0)
+func (s Seat) OccupiedVisibleSeatCount (sa SeatingArea) int {
+  count := 0
 
-  for _, slope := range s.VisibleSlopes() {
+  for _, slope := range s.visibleSlopes {
     tmp  := Seat{}
     halt := false
     iter := 1
@@ -121,40 +145,32 @@ func (s Seat) VisibleSeats (sa SeatingArea) []Seat {
       if sa.IsSeatIdWithinArea(tmp) {
         id         := tmp.Id()
         s1, exists := sa.seats[id]
-        if exists {
-          vs   = append(vs, s1)     // found a seat
+        if exists {                 // visible seat; check and stop
+          if s1.occupied {
+            count = count + 1       // occupied visible seat; add
+          }
           halt = true
-        } else {
-          iter = iter + 1           // else, open floor so look further
+        } else {                    // open floor; continue
+          iter = iter + 1
         }
-      } else {
-        halt = true                 // off the board
+      } else {                      // off the board; stop
+        halt = true
       }
     }
   }
-  
-  return vs
+
+  return count
 }
 
-func (s Seat) OccupiedVisibleSeats (sa SeatingArea) []Seat {
-  vs := s.VisibleSeats(sa)
-  os := make([]Seat, 0)
-  for _, s := range vs {
-    if s.occupied {
-      os = append(os, s)
-    }
-  }
-  return os
-}
-
-func (s Seat) OccupiedVisibleSeatCount (sa SeatingArea) int {
-  return len(s.OccupiedVisibleSeats(sa))
-}
 
 // ---------- UTILITIES -----------------------------------
 
 func (s Seat) Copy () Seat {
-  return Seat{x: s.x, y: s.y, occupied: s.occupied}
+  return Seat{x:              s.x,
+              y:              s.y,
+              occupied:       s.occupied,
+              adjacentIds:    s.adjacentIds,
+              visibleSlopes:  s.visibleSlopes}
 }
 
 func (s Seat) Id () string {
