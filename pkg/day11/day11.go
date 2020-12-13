@@ -26,7 +26,7 @@ func Puzzle1() int {
   for prev != curr {
     prev = curr
     area = area.IterateByAdjacency()
-    curr = area.OccupiedSeatCount()
+    curr = area.TotalOccupiedSeatCount()
   }
 
   return curr
@@ -40,7 +40,7 @@ func Puzzle2() int {
   for prev != curr {
     prev = curr
     area = area.IterateByVisibility()
-    curr = area.OccupiedSeatCount()
+    curr = area.TotalOccupiedSeatCount()
   }
 
   return curr

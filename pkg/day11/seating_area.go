@@ -151,13 +151,13 @@ func (sa SeatingArea) FindVisibleIds (s Seat) pie.Strings {
   return vsids
 }
 
-func (sa SeatingArea) OccupiedVisibleSeatCount (s Seat) int {
+func (sa SeatingArea) OccupiedVisibleSeatCount (s Seat, max int) int {
   count := 0
   for _, id := range s.visibleIds {
     s, exists := sa.seats[id]
     if exists && s.occupied {
       count = count + 1
-      if count > 4 {
+      if count > max {
         break
       }
     }
@@ -166,13 +166,14 @@ func (sa SeatingArea) OccupiedVisibleSeatCount (s Seat) int {
 }
 
 func (sa SeatingArea) ReassignByVisibleSeats (s Seat) Seat {
-  s1   := s.Copy()
-  oasc := sa.OccupiedVisibleSeatCount(s)
+  s1 := s.Copy()
   if s.occupied {
+    oasc := sa.OccupiedVisibleSeatCount(s, 4)
     if oasc > 4 {
       s1.occupied = false
     }
   } else {
+    oasc := sa.OccupiedVisibleSeatCount(s, 0)
     if oasc == 0 {
       s1.occupied = true
     }
@@ -188,7 +189,23 @@ func (sa SeatingArea) IsSeatIdWithinArea (s Seat) bool {
          s.y > 0 && s.y <= sa.height
 }
 
-func (sa SeatingArea) OccupiedSeatCount () int {
+func (sa SeatingArea) TooManyOccupiedSeats (seatIds pie.Strings, maxOccupied int) bool {
+  result := false
+  count  := 0
+  for _, id := range seatIds {
+    s, exists := sa.seats[id]
+    if exists && s.occupied {
+      count = count + 1
+      if count > maxOccupied {
+        result = true
+        break
+      }
+    }
+  }
+  return result
+}
+
+func (sa SeatingArea) TotalOccupiedSeatCount () int {
   count := 0
   for _, v := range sa.seats {
     if v.occupied {
@@ -229,9 +246,9 @@ func (sa SeatingArea) Print (step int) int {
     fmt.Println(row.Join(""))
   }
   fmt.Println("")
-  fmt.Println("Occupied: ", sa.OccupiedSeatCount())
+  fmt.Println("Occupied: ", sa.TotalOccupiedSeatCount())
   fmt.Println("Step:     ", step)
   fmt.Println("")
 
-  return sa.OccupiedSeatCount()
+  return sa.TotalOccupiedSeatCount()
 }
