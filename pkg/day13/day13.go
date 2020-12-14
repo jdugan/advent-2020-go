@@ -114,9 +114,10 @@ func combineFleet (fleet []Bus) []Bus {
   buses := make([]Bus, 0)
   buses  = append(buses, Bus{id: 13, position: 3, offset: 3})
   buses  = append(buses, Bus{id: 17, position: 17, offset: 17})
-  buses  = append(buses, Bus{id: 41, position: 27, offset: 27})
+  // buses  = append(buses, Bus{id: 41, position: 27, offset: 27})
   buses  = append(buses, Bus{id: 275244887, position: 37, offset: 37})
-  buses  = append(buses, Bus{id: 733, position: 68, offset: 68})
+  buses  = append(buses, Bus{id: 30053, position: 68, offset: 68})
+  // buses  = append(buses, Bus{id: 733, position: 68, offset: 68})
   // for _, bus := range bmap {
   //   buses = append(buses, bus)
   // }
