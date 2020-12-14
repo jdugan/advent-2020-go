@@ -5,7 +5,6 @@ package day13
 
 type Bus struct {
   id        int
-  position  int
   offset    int
 }
 
