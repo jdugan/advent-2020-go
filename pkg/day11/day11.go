@@ -9,6 +9,11 @@ import (
 
 
 // ========== PUBLIC FNS ==================================
+// TODO: Need to refactor both methods for performance.
+// They take around 1,5s combined so far. :(
+//
+// A good opprtunity to experiment with goroutines?
+//
 
 func Both() {
   fmt.Println(" ")
