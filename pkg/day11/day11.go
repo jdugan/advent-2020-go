@@ -4,6 +4,8 @@ import (
   "fmt"
   "strings"
 
+  "github.com/elliotchance/pie/pie"
+
   "../../pkg/reader"
 )
 
@@ -71,5 +73,19 @@ func baseSeatingArea () SeatingArea {
     }
   }
 
-  return SeatingArea{seats: seats, width: width, height: height}
+  return SeatingArea{seats: seats, width: width, height: height, slopes: baseSlopes()}
+}
+
+func baseSlopes () []pie.Ints {
+  slopes := make([]pie.Ints, 8)
+  slopes[0] = pie.Ints{-1, -1}      // northwest
+  slopes[1] = pie.Ints{0, -1}       // north
+  slopes[2] = pie.Ints{1, -1}       // northeast
+  slopes[3] = pie.Ints{1, 0}        // east
+  slopes[4] = pie.Ints{1, 1}        // southeast
+  slopes[5] = pie.Ints{0, 1}        // south
+  slopes[6] = pie.Ints{-1, 1}       // southwest
+  slopes[7] = pie.Ints{-1, 0}       // west
+
+  return slopes
 }

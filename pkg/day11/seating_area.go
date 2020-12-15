@@ -13,13 +13,19 @@ type SeatingArea struct {
   seats   map[string]Seat
   width   int
   height  int
+  slopes  []pie.Ints
+}
+
+type Result struct {
+  id     string
+  seat   Seat
 }
 
 
 // ========== RECEIVERS ===================================
 
 func (sa SeatingArea) IterateByAdjacency () SeatingArea {
-  wsa := sa.Copy()
+  wsa := sa.ShallowCopy()
   for id, s := range sa.seats {
     s1 := sa.ReassignByAdjacentSeats(s)
     wsa.seats[id] = s1
@@ -28,7 +34,7 @@ func (sa SeatingArea) IterateByAdjacency () SeatingArea {
 }
 
 func (sa SeatingArea) IterateByVisibility () SeatingArea {
-  wsa := sa.Copy()
+  wsa := sa.ShallowCopy()
   for id, s := range sa.seats {
     s1 := sa.ReassignByVisibleSeats(s)
     wsa.seats[id] = s1
@@ -113,18 +119,8 @@ func (sa SeatingArea) OccupiedAdjacentSeatCount (s Seat) int {
 // ---------- VISIBLE HELPERS -----------------------------
 
 func (sa SeatingArea) FindVisibleIds (s Seat) pie.Strings {
-  slopes := make([]pie.Ints, 0)
-  slopes  = append(slopes, pie.Ints{-1, -1})      // northwest
-  slopes  = append(slopes, pie.Ints{0, -1})       // north
-  slopes  = append(slopes, pie.Ints{1, -1})       // northeast
-  slopes  = append(slopes, pie.Ints{1, 0})        // east
-  slopes  = append(slopes, pie.Ints{1, 1})        // southeast
-  slopes  = append(slopes, pie.Ints{0, 1})        // south
-  slopes  = append(slopes, pie.Ints{-1, 1})       // southwest
-  slopes  = append(slopes, pie.Ints{-1, 0})       // west
-
   vsids := pie.Strings{}
-  for _, slope := range slopes {
+  for _, slope := range sa.slopes {
     tmp  := Seat{}
     halt := false
     iter := 1
@@ -218,11 +214,8 @@ func (sa SeatingArea) TotalOccupiedSeatCount () int {
 
 // ---------- UTILITIES -----------------------------------
 
-func (sa SeatingArea) Copy () SeatingArea {
-  sa1 := SeatingArea{seats: make(map[string]Seat), width: sa.width, height: sa.height}
-  for k, v := range sa.seats {
-    sa1.seats[k] = v.Copy()
-  }
+func (sa SeatingArea) ShallowCopy () SeatingArea {
+  sa1 := SeatingArea{seats: make(map[string]Seat), width: sa.width, height: sa.height, slopes: sa.slopes}
   return sa1
 }
 
