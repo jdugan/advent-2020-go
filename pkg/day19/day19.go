@@ -2,7 +2,6 @@ package day19
 
 import (
   "fmt"
-  "regexp"
   "strconv"
   "strings"
 
@@ -26,47 +25,21 @@ func Puzzle1() int {
   rules, msgs := data()
   rules        = rules.Expand()
   rstr        := pie.Strings{"^", rules[0], "$"}.Join("")
+  analyser    := Analyser{messages: msgs}
 
-  return matchCount(msgs, rstr)
+  return analyser.CountMatches(rstr)
 }
 
 func Puzzle2() int {
   rules, msgs := data()
-  rules[8]     = "42 | 42 8"
-  rules[11]    = "42 31 | 42 11 31"
-  rules        = rules.Expand()
-  rules[8]     = pie.Strings{"(", rules[42], "+)"}.Join("")
+  analyser    := Analyser{messages: msgs}
+  rules        = analyser.CorrectedRules(rules)
 
-  sum := 0
-  for i := 1; i < 20; i++ {
-    s := strconv.Itoa(i)
-
-    rules[11]    = pie.Strings{"((", rules[42], "){", s, "}(", rules[31], "){", s, "})"}.Join("")
-    rules[0]     = pie.Strings{"(", rules[8], rules[11], ")"}.Join("")
-
-    rstr  := pie.Strings{"^", rules[0], "$"}.Join("")
-    count := matchCount(msgs, rstr)
-    sum    = sum + count
-  }
-
-  return sum
+  return analyser.CountCorrectedMatches(rules)
 }
 
 
 // ========== PRIVATE FNS =================================
-
-func matchCount (msgs []string, rstr string) int {
-  count := 0
-
-  for _, msg := range msgs {
-    matched, _ := regexp.MatchString(rstr, msg)
-    if matched {
-      count = count + 1
-    }
-  }
-
-  return count
-}
 
 func data () (RuleSet, pie.Strings) {
   lines := reader.Lines("./data/day19/input.txt")

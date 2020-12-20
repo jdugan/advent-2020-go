@@ -17,22 +17,6 @@ type RuleSet map[int]string
 
 // ========== RECEIVERS ===================================
 
-// Here's what we want to get.
-//
-// 0: 4 1 5
-// 1: 2 3 | 3 2
-// 2: 4 4 | 5 5
-// 3: 4 5 | 5 4
-// 4: "a"
-// 5: "b"
-//
-// 0: "(a((aa|bb)(ab|ba)|(ab|ba)(aa|bb))b)"
-// 1: "((aa|bb)(ab|ba)|(ab|ba)(aa|bb))"
-// 2: "(aa|bb)"
-// 3: "(ab|ba)"
-// 4: "a"
-// 5: "b"
-//
 func (rs RuleSet) Expand () RuleSet {
   ers := RuleSet{}
   frs := RuleSet{}
