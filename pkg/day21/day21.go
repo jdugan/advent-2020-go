@@ -2,6 +2,8 @@ package day21
 
 import (
   "fmt"
+  "regexp"
+  "strings"
 
   "github.com/elliotchance/pie/pie"
 
@@ -20,18 +22,51 @@ func Both() {
 }
 
 func Puzzle1() int {
-  return -1
+  products, imap := groceries()
+  inames         := imap.NonAllergenics()
+
+  return products.CountOccurrences(inames)
 }
 
-func Puzzle2() int {
-  return -2
+func Puzzle2() string {
+  _, imap     := groceries()
+  allergenics := imap.Allergenics()
+  names       := allergenics.SortedNames()
+
+  return names.Join(",")
 }
 
 
 // ========== PRIVATE FNS =================================
 
-func data () pie.Strings {
+func groceries () (Products, IngredientMap) {
   lines := reader.Lines("./data/day21/input.txt")
+  re    := regexp.MustCompile(`^(.+) \(contains (.+)\)$`)
 
-  return lines
+  products    := Products{}
+  ingredients := IngredientMap{}
+  allergens   := AllergenMap{}
+
+  inames      := pie.Strings{}
+  anames      := pie.Strings{}
+
+  for _, line := range lines {
+    groups := re.FindAllStringSubmatch(line, 1)
+    if len(groups) > 0 {
+      group := groups[0]
+      inames = pie.Strings(strings.Split(group[1], " "))
+      anames = pie.Strings(strings.Split(group[2], ", "))
+    } else {
+      inames = pie.Strings(strings.Split(line, " "))
+      anames = pie.Strings{}
+    }
+
+    products    = append(products, Product{ingredients: inames})
+    ingredients = ingredients.RegisterNamesIfMissing(inames)
+    allergens   = allergens.RegisterEntriesAndReduce(anames, inames)
+  }
+
+  ingredients = ingredients.ApplyAllergenMap(allergens)
+
+  return products, ingredients
 }
