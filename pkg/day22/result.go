@@ -3,10 +3,14 @@ package day22
 
 // ========== DEFINITION ==================================
 
-type Thing struct {}
+type Result struct {
+  winner  int
+  score   int
+}
 
 
 // ========== RECEIVERS ===================================
 
-
-// ---------- UTILITIES -----------------------------------
+func (r Result) Forfeit () Result {
+  return Result{winner: 1, score: -1}
+}

@@ -2,6 +2,7 @@ package day22
 
 import (
   "fmt"
+  "strings"
 
   "github.com/elliotchance/pie/pie"
 
@@ -20,18 +21,33 @@ func Both() {
 }
 
 func Puzzle1() int {
-  return -1
+  d1, d2 := decks()
+  game   := Game{d1: d1, d2: d2}
+  result := game.Play()
+
+  return result.score
 }
 
 func Puzzle2() int {
-  return -2
+  d1, d2 := decks()
+  game   := Game{d1: d1, d2: d2}
+  result := game.PlayRecursively()
+
+  return result.score
 }
 
 
 // ========== PRIVATE FNS =================================
 
-func data () pie.Strings {
+func decks () (pie.Ints, pie.Ints) {
   lines := reader.Lines("./data/day22/input.txt")
+  d1    := parseLine(lines[0])
+  d2    := parseLine(lines[1])
 
-  return lines
+  return d1, d2
+}
+
+func parseLine (line string) pie.Ints {
+  cards := pie.Strings(strings.Split(line, ","))
+  return cards.Ints()
 }
