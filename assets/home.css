@@ -1,10 +1,51 @@
-.calendar .calendar-color-l { color:#ccccff; }
+.calendar .calendar-day { margin-left: 2rem; }
+
+.calendar .calendar-color-p { color:#9900ff; }
 .calendar .calendar-color-g { color:#00cc00; }
 .calendar .calendar-color-o { color:#ffcc99; }
-.calendar .calendar-color-a { color:#cccccc; }
-.calendar .calendar-color-p { color:#9900ff; }
-.calendar .calendar-color-w { color:#ffffff; }
 .calendar .calendar-color-b { color:#333399; }
+.calendar .calendar-color-w { color:#ffffff; }
+.calendar .calendar-color-l { color:#ccccff; }
+.calendar .calendar-color-a { color:#cccccc; }
 .calendar .calendar-color-r { color:#ff0000; }
 
-.calendar .calendar-day { margin-left: 2rem; }
+@keyframes anim-seamonster {
+    0% { transform: translate(-.9em,0); }
+   50% { transform: translate( .9em,0); }
+  100% { transform: translate(-.9em,0); }
+}
+.calendar-color-p {
+  animation: anim-seamonster 7s ease-in-out infinite;
+  display: inline-block;
+}
+.calendar-color-r {
+  position: relative;
+}
+.calendar-color-r::before {
+  content: "*";
+  position: absolute;
+  color: #ffff66;
+  transform: translate(-.5px,-.6em) scale(.5);
+  text-shadow: 0 0 25px #ffff66, 0 0 20px #ffff66, 0 0 15px #ffff66, 0 0 10px #ffff66, 0 0 5px #ffff66;
+}
+
+@keyframes anim-storm {
+    0% { opacity:0; transform:rotate3d(1,0,0,45deg) translate(0,0) rotate(0turn); }
+   25% { opacity:1; }
+   75% { opacity:1; }
+  100% { opacity:0; transform:rotate3d(1,0,0,45deg) translate(-20em,-7em) rotate(-2turn); }
+}
+#storm {
+  position: absolute;
+  left: 35em;
+  top: 30em;
+  z-index: -1;
+  transform-origin: .3em 1.3em;
+  animation: anim-storm 10s ease-in-out infinite;
+}
+#storm .cloud {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: bottom center;
+}

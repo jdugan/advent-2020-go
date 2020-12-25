@@ -11,7 +11,7 @@
   <header>
     <div>
       <h1 class="title-global"><a href="https://adventofcode.com/2020" target="_blank">Advent of Code</a></h1>
-      <div class="user">John Dugan <span class="star-count">(AoC++) 48*</span></div>
+      <div class="user">John Dugan <span class="star-count">(AoC++) 50*</span></div>
     </div>
     <div>
       <h1 class="title-event">&nbsp;&nbsp;<span class="title-event-wrap">{year=&gt;</span><a href="https://adventofcode.com/2020" target="_blank">2020</a><span class="title-event-wrap">}</span></h1>
@@ -52,8 +52,25 @@
 <a aria-label="Day 22, two stars" href="day22.html" class="calendar-day22 calendar-verycomplete"> <span class="calendar-color-o">~</span> <span class="calendar-color-o">~</span> <span class="calendar-color-o">~</span>    <span class="calendar-color-g">..'</span>   <span class="calendar-color-b">~</span>    <span class="calendar-color-a">\______</span>    <span class="calendar-color-b">~</span>         <span class="calendar-color-b">~</span>    <span class="calendar-color-b">~</span>   <span class="calendar-day">22</span> <span class="calendar-mark-complete">*</span><span class="calendar-mark-verycomplete">*</span></a>
 <a aria-label="Day 23, two stars" href="day23.html" class="calendar-day23 calendar-verycomplete">  <span class="calendar-color-g">.....'''</span>           <span class="calendar-color-b">~</span>     <span class="calendar-color-b">~</span><span class="calendar-color-a">\____</span>                  <span class="calendar-day">23</span> <span class="calendar-mark-complete">*</span><span class="calendar-mark-verycomplete">*</span></a>
 <a aria-label="Day 24, two stars" href="day24.html" class="calendar-day24 calendar-verycomplete"><span class="calendar-color-g">''</span>         <span class="calendar-color-b">~</span>                 <span class="calendar-color-g">.'..</span><span class="calendar-color-a">\___</span><span class="calendar-color-g">''..</span>       <span class="calendar-color-b">~</span>  <span class="calendar-day">24</span> <span class="calendar-mark-complete">*</span><span class="calendar-mark-verycomplete">*</span></a>
-<span aria-hidden="true" class="calendar-day25">     <span class="calendar-color-b">~</span>          <span class="calendar-color-b">~</span>        <span class="calendar-color-b">~</span>    <span class="calendar-color-g">'.'</span>  <span class="calendar-color-g">:</span> <span class="calendar-color-a">[]</span> .'  <span class="calendar-color-b">~</span>      <span class="calendar-day">25</span><span id="calendar-countdown"></span></span>
+<a aria-label="Day 25, two stars" href="day25.html" class="calendar-day25 calendar-verycomplete">     <span class="calendar-color-b">~</span>          <span class="calendar-color-b">~</span>        <span class="calendar-color-b">~</span>    <span class="calendar-color-g">'.'</span>  <span class="calendar-color-g">:</span> <span class="calendar-color-a">[]</span> <span class="calendar-color-g">.'</span>  <span class="calendar-color-b">~</span>      <span class="calendar-day">25</span> <span class="calendar-mark-complete">*</span><span class="calendar-mark-verycomplete">*</span></a>
     </pre>
+    <script>
+      var calendar = document.getElementsByClassName("calendar")[0];
+      calendar.style.position = "relative";
+      var storm = document.createElement("div");
+      storm.id = "storm";
+      calendar.appendChild(storm);
+      for (var i=0; i<500; i++) {
+        var cloud = document.createElement("div");
+        cloud.className = "cloud";
+        cloud.textContent = "|";
+        var r = Math.pow(Math.random(),1.2);
+        var t = Math.random();
+        cloud.style.opacity = 1-r;
+        cloud.style.transform = "rotate("+(-1*(t+r))+"turn) translate(-.5em,"+(-6*r)+"em) rotate("+(.2*r)+"turn)";
+        storm.appendChild(cloud);
+      }
+    </script>
   </main>
 
 </body>

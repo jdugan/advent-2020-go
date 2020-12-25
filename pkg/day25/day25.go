@@ -3,8 +3,6 @@ package day25
 import (
   "fmt"
 
-  "github.com/elliotchance/pie/pie"
-
   "../../pkg/reader"
 )
 
@@ -20,18 +18,29 @@ func Both() {
 }
 
 func Puzzle1() int {
-  return -1
+  card, door := data()
+  enckey     := card.Encrypt(door.pubkey)
+
+  return enckey
 }
 
 func Puzzle2() int {
-  return -2
+  return 50   // no puzzle to solve; woohoo!
 }
 
 
 // ========== PRIVATE FNS =================================
 
-func data () pie.Strings {
-  lines := reader.Lines("./data/day25/input.txt")
+func data () (Device, Device) {
+  lines := reader.Lines("./data/day25/input.txt").Ints()
 
-  return lines
+  card      := Device{pubkey: lines[0]}
+  cls       := card.Decrypt(7)
+  card.loops = cls
+
+  door      := Device{pubkey: lines[1]}
+  dls       := door.Decrypt(7)
+  door.loops = dls
+
+  return card, door
 }
